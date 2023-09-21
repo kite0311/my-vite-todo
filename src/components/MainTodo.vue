@@ -14,6 +14,41 @@ const addTodo = () => {
 
   todoRef.value = '';
 };
+
+const isEditRef = ref(false);
+let editId = -1;
+
+const showTodo = (id) => {
+  const todo = todoListRef.value.find((todo) => todo.id === id);
+  todoRef.value = todo.task;
+  isEditRef.value = true;
+  editId = id;
+};
+
+const editTodo = () => {
+  const todo = todoListRef.value.find((todo) => todo.id === editId);
+
+  const idx = todoListRef.value.findIndex((todo) => todo.id === editId);
+
+  todo.task = todoRef.value;
+  todoListRef.value.splice(idx, todo);
+
+  localStorage.todoList = JSON.stringify(todoListRef);
+  isEditRef.value = false;
+  editIndex = -1;
+  todoRef.value = '';
+};
+
+const deleteTodo = (id) => {
+  const todo = todoListRef.value.find((todo) => todo.id === id);
+  const idx = todoListRef.value.findIndex((todo) => todo.id === id);
+
+  const delMsg = '「' + todo.task + '」を削除しますか？';
+  if (!confirm(delMsg)) return;
+
+  todoListRef.value.splice(idx, 1);
+  localStorage.todoList = JSON.stringify(todoListRef.value);
+};
 </script>
 
 <template>
@@ -28,8 +63,10 @@ const addTodo = () => {
         <label>{{ todo.task }}</label>
       </div>
       <div class="btns">
-        <button class="btn green">編</button>
-        <button class="btn pink">削</button>
+        <button class="btn green" @click="showTodo(todo.id)">編</button>
+        <button class="btn pink" @click="deleteTodo(todo.id)">削</button>
+        <button class="btn green" @click="editTodo" v-show="isEditRef">変更</button>
+        <button class="btn pink" @click="addTodo" v-show="!isEditRef">追加</button>
       </div>
     </div>
   </div>
