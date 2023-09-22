@@ -31,7 +31,7 @@ const editTodo = () => {
   const idx = todoListRef.value.findIndex((todo) => todo.id === editId);
 
   todo.task = todoRef.value;
-  todoListRef.value.splice(idx, todo);
+  todoListRef.value.splice(idx, 1, todo);
 
   localStorage.todoList = JSON.stringify(todoListRef);
   isEditRef.value = false;
