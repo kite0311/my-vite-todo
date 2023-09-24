@@ -1,53 +1,32 @@
 <script setup>
 import { ref } from 'vue';
+import { useTodoList } from '../composables/useTodoList';
 const todoRef = ref('');
-const todoListRef = ref([]);
-const Is = localStorage.todoList;
-todoListRef.value = Is ? JSON.parse(Is) : [];
+const isEditRef = ref(false);
+const { todoListRef, add, show, edit, del, check } = useTodoList();
 
 const addTodo = () => {
-  const id = new Date().getTime();
-
-  todoListRef.value.push({ id: id, task: todoRef.value });
-
-  localStorage.todoList = JSON.stringify(todoListRef.value);
-
+  add(todoRef.value);
   todoRef.value = '';
 };
 
-const isEditRef = ref(false);
-let editId = -1;
-
 const showTodo = (id) => {
-  const todo = todoListRef.value.find((todo) => todo.id === id);
-  todoRef.value = todo.task;
+  todoRef.value = show(id);
   isEditRef.value = true;
-  editId = id;
 };
 
 const editTodo = () => {
-  const todo = todoListRef.value.find((todo) => todo.id === editId);
-
-  const idx = todoListRef.value.findIndex((todo) => todo.id === editId);
-
-  todo.task = todoRef.value;
-  todoListRef.value.splice(idx, 1, todo);
-
-  localStorage.todoList = JSON.stringify(todoListRef);
+  edit(todoRef.value);
   isEditRef.value = false;
-  editIndex = -1;
   todoRef.value = '';
 };
 
 const deleteTodo = (id) => {
-  const todo = todoListRef.value.find((todo) => todo.id === id);
-  const idx = todoListRef.value.findIndex((todo) => todo.id === id);
+  del(id);
+};
 
-  const delMsg = '「' + todo.task + '」を削除しますか？';
-  if (!confirm(delMsg)) return;
-
-  todoListRef.value.splice(idx, 1);
-  localStorage.todoList = JSON.stringify(todoListRef.value);
+const changeCheck = (id) => {
+  check(id);
 };
 </script>
 
