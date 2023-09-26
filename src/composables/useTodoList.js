@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 export const useTodoList = () => {
   //ローカルストレージにtodoListが存在していればparseし、
@@ -61,5 +61,11 @@ export const useTodoList = () => {
     localStorage.todoList = JSON.stringify(todoListRef.value);
   };
 
-  return { todoListRef, add, show, edit, del, check };
+  const countFin = computed(() => {
+    //todo.checkedは「true/false」が入っているため、trueのtodoが返る
+    const finArr = todoListRef.value.filter((todo) => todo.checked);
+    return finArr.length;
+  });
+
+  return { todoListRef, add, show, edit, del, check, countFin };
 };
